@@ -18,6 +18,6 @@ COPY packages/database/src ./packages/database/src
 COPY packages/worker/src ./packages/worker/src
 
 # Generate Prisma client
-RUN cd packages/database && npx prisma generate
+RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 
 CMD ["npx", "tsx", "packages/worker/src/index.ts"]

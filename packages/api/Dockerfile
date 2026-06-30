@@ -19,7 +19,7 @@ COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
 
 # Generate Prisma client
-RUN cd packages/database && npx prisma generate
+RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 
 EXPOSE 3001
 CMD ["npx", "tsx", "packages/api/src/index.ts"]
