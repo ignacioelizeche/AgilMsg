@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '@agilmsg/database';
+import prisma from '../../../database/src/client';
 
 export async function meRoutes(app: FastifyInstance) {
   app.get('/api/auth/me', { preHandler: [app.authenticate] }, async (request: any) => {

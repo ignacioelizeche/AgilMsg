@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '@agilmsg/database';
+import prisma from '../../../database/src/client';
 import { z } from 'zod';
 import { getTemplates, createTemplate } from '../../services/meta-api';
 

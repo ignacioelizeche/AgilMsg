@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '@agilmsg/database';
+import prisma from '../../../database/src/client';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 

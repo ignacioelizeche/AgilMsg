@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '@agilmsg/database';
+import prisma from '../../../database/src/client';
 
 export async function billingRoutes(app: FastifyInstance) {
   // Get usage for current month
