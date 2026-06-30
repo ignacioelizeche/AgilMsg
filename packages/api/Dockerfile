@@ -2,9 +2,15 @@ FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies
-COPY packages/database/package.json packages/shared/package.json packages/api/package.json ./
-RUN npm install
+# Copy package.json files to their proper locations
+COPY packages/database/package.json ./packages/database/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/api/package.json ./packages/api/
+
+# Install dependencies in each package
+RUN cd packages/database && npm install
+RUN cd packages/shared && npm install
+RUN cd packages/api && npm install
 
 # Copy source
 COPY packages/shared/src ./packages/shared/src
@@ -13,8 +19,8 @@ COPY packages/database/src ./packages/database/src
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
 
-# Generate Prisma client (prisma binary is in root node_modules)
-RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
+# Generate Prisma client
+RUN cd packages/database && ./node_modules/.bin/prisma generate
 
 EXPOSE 3001
 CMD ["npx", "tsx", "packages/api/src/index.ts"]
