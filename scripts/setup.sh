@@ -44,11 +44,11 @@ done
 
 # Install dependencies in database package
 echo "📦 Instalando dependencias de Prisma..."
-docker compose run --rm -w /app/packages/database api sh -c "npm install --silent 2>/dev/null; npx prisma generate"
+docker compose run --rm -w /app/packages/database api sh -c "npm install --silent 2>/dev/null; ./node_modules/.bin/prisma generate"
 
 # Run Prisma migrations
 echo "🗄️  Ejecutando migraciones de Prisma..."
-docker compose run --rm -w /app/packages/database api sh -c "npx prisma migrate dev --name init"
+docker compose run --rm -w /app/packages/database api sh -c "./node_modules/.bin/prisma migrate dev --name init"
 
 echo ""
 echo "✅ Base de datos creada y migrada!"
