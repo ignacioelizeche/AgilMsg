@@ -1,0 +1,10 @@
+{
+  "name": "agilmsg",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/database",
+    "packages/api",
+    "packages/worker"
+  ]
+}
