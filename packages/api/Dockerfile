@@ -11,7 +11,6 @@ COPY packages/shared/src ./packages/shared/src
 COPY packages/database/prisma ./packages/database/prisma
 COPY packages/database/src ./packages/database/src
 COPY packages/api/src ./packages/api/src
-COPY packages/api/public ./packages/api/public
 COPY packages/api/tsconfig.json ./packages/api/
 
 # Generate Prisma client
