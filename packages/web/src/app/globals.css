@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #322e2b;
+  --primary-light: #4a4542;
+  --accent: #c4e717;
+  --accent-hover: #b5d415;
+  --secondary: #8a7e53;
+  --bg: #eeeeee;
+  --card-bg: #ffffff;
+  --text: #322e2b;
+  --text-light: #6b6560;
+  --border: #e5e2dd;
+  --success: #27ae60;
+  --warning: #f39c12;
+  --danger: #c4523a;
+  --shadow: 0 2px 16px rgba(50,46,43,0.06);
+}
+
+body {
+  font-family: 'Work Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}

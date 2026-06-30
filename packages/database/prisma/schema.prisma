@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Organizations (multi-tenant) ──────────────────────────
+
+model Organization {
+  id            String   @id @default(cuid())
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users         User[]
+  wabas         WhatsAppBusinessAccount[]
+  usageRecords  UsageRecord[]
+}
+
+// ─── Users ─────────────────────────────────────────────────
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String
+  name            String
+  role            Role     @default(ADMIN)
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  createdAt       DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+// ─── WhatsApp Business Accounts ────────────────────────────
+
+model WhatsAppBusinessAccount {
+  id              String   @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+
+  wabaId          String   @unique
+  businessToken   String
+  tokenExpiresAt  DateTime?
+  status          String   @default("active")
+
+  phoneNumbers    PhoneNumber[]
+  templates       Template[]
+  messages        Message[]
+
+  createdAt       DateTime @default(now())
+}
+
+// ─── Phone Numbers (multi-phone per WABA) ──────────────────
+
+model PhoneNumber {
+  id              String   @id @default(cuid())
+  wabaId          String
+  waba            WhatsAppBusinessAccount @relation(fields: [wabaId], references: [id], onDelete: Cascade)
+
+  phoneNumberId   String   @unique
+  displayNumber   String
+  displayName     String?
+  qualityRating   String?
+  status          String   @default("CONNECTED")
+
+  messages        Message[]
+
+  createdAt       DateTime @default(now())
+}
+
+// ─── Messages ──────────────────────────────────────────────
+
+model Message {
+  id              String   @id @default(cuid())
+  wabaId          String
+  waba            WhatsAppBusinessAccount @relation(fields: [wabaId], references: [id])
+  phoneNumberId   String?
+  phoneNumber     PhoneNumber? @relation(fields: [phoneNumberId], references: [id])
+
+  direction       MessageDirection
+  messageType     String
+  from            String
+  to              String
+  content         Json?
+  status          String?
+  metaMessageId   String?   @unique
+  timestamp       DateTime
+  billingCategory String?
+  cost            Decimal?  @db.Decimal(10, 6)
+
+  createdAt       DateTime @default(now())
+
+  @@index([wabaId, createdAt])
+  @@index([phoneNumberId, createdAt])
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+// ─── Templates ─────────────────────────────────────────────
+
+model Template {
+  id              String   @id @default(cuid())
+  wabaId          String
+  waba            WhatsAppBusinessAccount @relation(fields: [wabaId], references: [id])
+
+  templateId      String?
+  name            String
+  language        String   @default("es")
+  category        String
+  status          TemplateStatus @default(DRAFT)
+  components      Json?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([wabaId, status])
+}
+
+enum TemplateStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── Billing / Usage ───────────────────────────────────────
+
+model UsageRecord {
+  id              String   @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+
+  month           Int
+  year            Int
+  messageType     String
+  count           Int      @default(0)
+  cost            Decimal  @db.Decimal(10, 6) @default(0)
+
+  @@unique([organizationId, year, month, messageType])
+}
+
+// ─── Webhook Event Log ─────────────────────────────────────
+
+model WebhookEvent {
+  id              String   @id @default(cuid())
+  wabaId          String?
+  eventField      String
+  payload         Json
+  processedAt     DateTime @default(now())
+  status          String   @default("received")
+
+  @@index([processedAt])
+}
