@@ -1,8 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import prisma from '../../../../database/src/client';
+import { authenticate } from '../../plugins/auth';
 
 export async function meRoutes(app: FastifyInstance) {
-  app.get('/api/auth/me', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/auth/me', { preHandler: [authenticate] }, async (request: any) => {
     const { userId } = request.user;
 
     const user = await prisma.user.findUnique({

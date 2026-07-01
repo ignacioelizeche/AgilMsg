@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import prisma from '../../../../database/src/client';
 import { z } from 'zod';
 import { getTemplates, createTemplate } from '../../services/meta-api';
+import { authenticate } from '../../plugins/auth';
 
 const createTemplateSchema = z.object({
   wabaId: z.string().min(1),
@@ -13,7 +14,7 @@ const createTemplateSchema = z.object({
 
 export async function templatesRoutes(app: FastifyInstance) {
   // List templates for a WABA (local DB + optional sync from Meta)
-  app.get('/api/whatsapp/templates', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/whatsapp/templates', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
     const query = request.query as { wabaId?: string };
 
@@ -45,7 +46,7 @@ export async function templatesRoutes(app: FastifyInstance) {
   });
 
   // Create a template (save locally + submit to Meta)
-  app.post('/api/whatsapp/templates', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.post('/api/whatsapp/templates', { preHandler: [authenticate] }, async (request: any, reply) => {
     try {
       const body = createTemplateSchema.parse(request.body);
       const { organizationId } = request.user;
@@ -110,7 +111,7 @@ export async function templatesRoutes(app: FastifyInstance) {
   });
 
   // Sync templates from Meta
-  app.post('/api/whatsapp/templates/sync', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.post('/api/whatsapp/templates/sync', { preHandler: [authenticate] }, async (request: any, reply) => {
     try {
       const { organizationId } = request.user;
       const body = request.body as { wabaId: string };

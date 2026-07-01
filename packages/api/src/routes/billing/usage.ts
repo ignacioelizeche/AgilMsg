@@ -1,9 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import prisma from '../../../../database/src/client';
+import { authenticate } from '../../plugins/auth';
 
 export async function billingRoutes(app: FastifyInstance) {
   // Get usage for current month
-  app.get('/api/billing/usage', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/billing/usage', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
     const now = new Date();
     const month = now.getMonth() + 1;
@@ -40,7 +41,7 @@ export async function billingRoutes(app: FastifyInstance) {
   });
 
   // Get usage history
-  app.get('/api/billing/history', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/billing/history', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
     const query = request.query as { months?: string };
     const monthsBack = parseInt(query.months || '6', 10);
@@ -72,7 +73,7 @@ export async function billingRoutes(app: FastifyInstance) {
   });
 
   // Get per-account breakdown
-  app.get('/api/billing/by-account', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/billing/by-account', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
     const now = new Date();
     const month = now.getMonth() + 1;

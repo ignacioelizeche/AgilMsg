@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fjwt from '@fastify/jwt';
 
 export async function authPlugin(app: FastifyInstance) {
@@ -7,18 +7,19 @@ export async function authPlugin(app: FastifyInstance) {
     sign: { expiresIn: '7d' },
   });
 
-  app.decorate('authenticate', async (request: any, reply: any) => {
-    try {
-      await request.jwtVerify();
-    } catch (err) {
-      reply.status(401).send({ error: 'Unauthorized' });
-    }
-  });
+  app.decorate('authenticate', authenticate);
 }
 
-// Module augmentation for Fastify
+export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    await request.jwtVerify();
+  } catch (err) {
+    reply.status(401).send({ error: 'Unauthorized' });
+  }
+}
+
 declare module 'fastify' {
   interface FastifyInstance {
-    authenticate: (request: any, reply: any) => Promise<void>;
+    authenticate: typeof authenticate;
   }
 }

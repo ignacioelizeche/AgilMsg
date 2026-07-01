@@ -1,9 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import prisma from '../../../../database/src/client';
+import { authenticate } from '../../plugins/auth';
 
 export async function accountsRoutes(app: FastifyInstance) {
   // List all WABAs for the organization (with phone numbers)
-  app.get('/api/whatsapp/accounts', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/whatsapp/accounts', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
 
     const wabas = await prisma.whatsAppBusinessAccount.findMany({
@@ -53,7 +54,7 @@ export async function accountsRoutes(app: FastifyInstance) {
   });
 
   // Get single WABA details
-  app.get('/api/whatsapp/accounts/:id', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.get('/api/whatsapp/accounts/:id', { preHandler: [authenticate] }, async (request: any, reply) => {
     const { organizationId } = request.user;
     const { id } = request.params as { id: string };
 
@@ -83,7 +84,7 @@ export async function accountsRoutes(app: FastifyInstance) {
   });
 
   // Disconnect (delete) a WABA
-  app.delete('/api/whatsapp/accounts/:id', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.delete('/api/whatsapp/accounts/:id', { preHandler: [authenticate] }, async (request: any, reply) => {
     const { organizationId } = request.user;
     const { id } = request.params as { id: string };
 
@@ -103,7 +104,7 @@ export async function accountsRoutes(app: FastifyInstance) {
   });
 
   // Refresh phone numbers for a WABA
-  app.post('/api/whatsapp/accounts/:id/refresh', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.post('/api/whatsapp/accounts/:id/refresh', { preHandler: [authenticate] }, async (request: any, reply) => {
     const { organizationId } = request.user;
     const { id } = request.params as { id: string };
 

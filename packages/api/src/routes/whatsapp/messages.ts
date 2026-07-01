@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import prisma from '../../../../database/src/client';
 import { z } from 'zod';
 import { sendTextMessage, sendTemplateMessage } from '../../services/meta-api';
+import { authenticate } from '../../plugins/auth';
 
 const sendMessageSchema = z.object({
   phoneNumberId: z.string().min(1),
@@ -15,7 +16,7 @@ const sendMessageSchema = z.object({
 
 export async function messagesRoutes(app: FastifyInstance) {
   // List messages (with filters)
-  app.get('/api/whatsapp/messages', { preHandler: [app.authenticate] }, async (request: any) => {
+  app.get('/api/whatsapp/messages', { preHandler: [authenticate] }, async (request: any) => {
     const { organizationId } = request.user;
     const query = request.query as {
       wabaId?: string;
@@ -74,7 +75,7 @@ export async function messagesRoutes(app: FastifyInstance) {
   });
 
   // Send a message
-  app.post('/api/whatsapp/send', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.post('/api/whatsapp/send', { preHandler: [authenticate] }, async (request: any, reply) => {
     try {
       const body = sendMessageSchema.parse(request.body);
       const { organizationId } = request.user;
