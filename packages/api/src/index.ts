@@ -17,10 +17,6 @@ async function main() {
   const app = Fastify({
     logger: {
       level: 'info',
-      transport: {
-        target: 'pino-pretty',
-        options: { colorize: true },
-      },
     },
   });
 
