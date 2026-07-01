@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '../../../database/src/client';
+import prisma from '../../../../database/src/client';
 
 export async function accountsRoutes(app: FastifyInstance) {
   // List all WABAs for the organization (with phone numbers)

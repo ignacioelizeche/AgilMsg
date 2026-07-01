@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '../../../database/src/client';
+import prisma from '../../../../database/src/client';
 import { z } from 'zod';
 import { sendTextMessage, sendTemplateMessage } from '../../services/meta-api';
 

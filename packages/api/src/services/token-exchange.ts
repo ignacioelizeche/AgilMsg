@@ -1,4 +1,4 @@
-import prisma from '../../database/src/client';
+import prisma from '../../../database/src/client';
 import { config } from '../config';
 import {
   exchangeCodeForToken,

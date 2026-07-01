@@ -1,5 +1,5 @@
 import { Queue, Worker } from 'bullmq';
-import { prisma } from '../../database/src/client';
+import { prisma } from '../../../database/src/client';
 
 const connection = { host: 'redis', port: 6379 };
 
