@@ -1,13 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { handleEmbeddedSignup } from '../../services/token-exchange';
+import { authenticate } from '../../plugins/auth';
 
 const exchangeSchema = z.object({
   code: z.string().min(1),
 });
 
 export async function onboardingRoutes(app: FastifyInstance) {
-  app.post('/api/onboarding/exchange', { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.post('/api/onboarding/exchange', { preHandler: [authenticate] }, async (request: any, reply) => {
     try {
       const body = exchangeSchema.parse(request.body);
       const { organizationId } = request.user;
