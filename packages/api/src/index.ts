@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
+import fjwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
 import { config } from './config';
-import { authPlugin } from './plugins/auth';
 import { corsPlugin } from './plugins/cors';
 import { registerRoutes } from './routes/auth/register';
 import { loginRoutes } from './routes/auth/login';
@@ -22,7 +22,9 @@ async function main() {
 
   // Plugins
   await app.register(corsPlugin);
-  await app.register(authPlugin);
+  await app.register(fjwt, {
+    secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+  });
   await app.register(rateLimit, {
     max: 100,
     timeWindow: '1 minute',
